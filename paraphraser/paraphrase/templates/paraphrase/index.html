@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paraphrasing App</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'yourapp/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- CSS Styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+            width: 60%;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .download-btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Paraphrase Your Sentence</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="input_paragraph" rows="4" cols="50" placeholder="Enter your paragraph here..."></textarea><br><br>
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if input_text %}
+            <h2>Original Sentence:</h2>
+            <p>{{ input_text }}</p>
+        {% endif %}
+
+        {% if paraphrased_results %}
+            <h2>Paraphrased Results:</h2>
+            <table>
+                <tr>
+                    <th>Paraphrased Sentence</th>
+                    <th>Similarity Score</th>
+                </tr>
+                {% for result in paraphrased_results %}
+                <tr>
+                    <td>{{ result.paraphrase }}</td>
+                    <td>{{ result.similarity }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <!-- Form to download the paraphrased results as a .txt file -->
+            <form method="POST" action="{% url 'download_txt' %}">
+                {% csrf_token %}
+                <!-- Hidden inputs to send the input text and paraphrased results -->
+                <input type="hidden" name="input_text" value="{{ input_text }}">
+                <input type="hidden" name="paraphrased_results" value="{{ paraphrased_results|safe }}">
+                <button type="submit" class="download-btn">Download as Text</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>

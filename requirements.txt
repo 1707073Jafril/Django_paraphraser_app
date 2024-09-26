@@ -1,0 +1,5 @@
+Django==5.1.1
+torch==2.4.0
+transformers==4.32.0
+scikit-learn==1.2.2
+huggingface-hub==0.16.4
